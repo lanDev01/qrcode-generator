@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import type { ChangeEvent } from 'react';
 import { Download } from 'lucide-react';
-
+import { Toaster, toast } from 'sonner';
 import QRCode from 'react-qr-code';
 import QRCodeLink from 'qrcode';
 import { Header } from './components/header';
@@ -50,6 +50,15 @@ export function App() {
     setIsDarkMode(prevMode => !prevMode);
   }
 
+  function handleDownload() {
+    const a = document.createElement('a');
+    a.href = qrcodeLink;
+    a.download = 'qrcode.png';
+    a.click();
+
+    toast.success('Download iniciado!');
+  }
+
   return (
     <section className="max-h-screen bg-light-background dark:bg-dark-background transition-colors duration-300 ease-in-out">
       <Header onToggleDarkMode={toggleDarkMode} isDarkMode={isDarkMode} />
@@ -58,7 +67,6 @@ export function App() {
         className="bg-light-background dark:bg-dark-background text-light-text dark:text-dark-text rounded-lg p-6 flex items-center justify-center transition-colors duration-300 ease-in-out"
       >
         <div className="max-w-md w-full h-3/4 border border-gray-300 dark:border-gray-700 bg-light-background dark:bg-dark-secondary rounded-lg shadow-lg flex flex-col items-center justify-center transition-colors duration-300 ease-in-out">
-          {/* Removi o título para manter o foco no QR Code */}
           <div className="p-6 border border-gray-300 dark:border-gray-700 rounded-xl">
             <QRCode value={link} size={350} />
           </div>
@@ -83,12 +91,15 @@ export function App() {
 
               <button
                 type="button"
-                className="px-4 py-2 rounded-r-lg bg-light-button dark:bg-dark-button hover:bg-light-buttonHover dark:hover:bg-dark-buttonHover transition-colors duration-300 ease-in-out"
+                onClick={handleDownload}
+                className={`px-4 py-2 rounded-r-lg bg-light-button dark:bg-dark-button hover:bg-light-buttonHover dark:hover:bg-dark-buttonHover transition-colors duration-300 ease-in-out ${
+                  link.trim() === '' ? 'opacity-50 cursor-not-allowed' : ''
+                }`}
+                disabled={link.trim() === ''}
               >
-                <a href={qrcodeLink} download="qrcode.png">
-                  <Download className="text-light-icon dark:text-dark-icon" />
-                </a>
+                <Download className="text-light-icon dark:text-dark-icon" />
               </button>
+              <Toaster />
             </div>
           </div>
         </div>
